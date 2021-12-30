@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+
+<h1>Compose</h1>
+
+<form method="post">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-lg-6">
+                <label for="postTitle">Title</label>
+                <input class="form-control" type="text" name="postTitle" id="postTitle" autofocus>
+            </div>
+            <div class="col-lg-6">
+                <label for="date">Post Date *</label>
+                <input class="form-control" type="text" name="date" id="date" placeholder="<%= todaysDate %>"
+                    value="<%= todaysDate %> ">
+            </div>
+        </div>
+        <label for="postBody">Post</label>
+        <textarea class="form-control" name="postBody" id="postBody" cols="30" rows="10"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit">Publish</button>
+    <p class="additional-info">* deleting the post date field will omit it from your post.</p>
+</form>
+
+<%- include('partials/footer') %>
