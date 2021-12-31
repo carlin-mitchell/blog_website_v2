@@ -2,5 +2,4 @@
 npm-debug.log
 .DS_Store
 /*.env
-config.js
 *cat_ipsum.txt
