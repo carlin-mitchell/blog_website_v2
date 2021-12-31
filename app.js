@@ -55,13 +55,6 @@ app.get('/', (req, res) => {
       });
     }
   });
-  
-  
-  
-  // res.render('home', {
-  //   homeStartingContent: homeStartingContent,
-  //   posts: posts,
-  // });
 });
 
 // ################################################ "/about" ##################################################
@@ -91,7 +84,6 @@ app.post('/compose', (req, res) => {
   const title = req.body.postTitle;
   const body = req.body.postBody;
   const date = req.body.date ? "Published " + req.body.date: "";
-  // console.log(`title: ${title}\n body: ${body} \n date: ${date}`);
   
   const post = new Post({
     title: title,
@@ -108,17 +100,19 @@ app.post('/compose', (req, res) => {
 });
 
 // ################################################ "/post" ###################################################
-app.get('/posts/:postName', (req, res) => {
-  let requestedTitle = _.lowerCase(req.params.postName);
-  posts.forEach(post => {
-    let storedTitle = _.lowerCase(post.title);
-    if (requestedTitle === storedTitle) {
+app.get('/posts/:postID', (req, res) => {
+  let requestedPostID = req.params.postID;
+  Post.findOne({_id: requestedPostID}, (err, foundPost) => {
+    if (err) {
+      console.log(`Could not find post with id: ${requestedPostID}`);
+    } else { 
       res.render('post', {
-        title: post.title,
-        body: post.body,
-        date: post.date,
+        title: foundPost.title,
+        date: foundPost.date,
+        body: foundPost.body,
+        _id: foundPost._id
       });
-    }; 
+    };
   });
 });
 
