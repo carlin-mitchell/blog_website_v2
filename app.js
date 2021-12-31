@@ -19,7 +19,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 
 //######################################## Mongoose Mongo Connection ########################################  
-const localOrAtlas = 'local' //choose between 'local' or 'atlas' to connect to the appropriate service
+const localOrAtlas = 'atlas' //choose between 'local' or 'atlas' to connect to the appropriate service
 const dbName = 'blogSiteDB';
 
   if (localOrAtlas.toLocaleLowerCase() === 'local'){
@@ -118,6 +118,6 @@ app.get('/posts/:postID', (req, res) => {
 
 
 // ############################################ app.listen() ##########################################
-app.listen(port, function () {
+app.listen(process.env.PORT || port, function () {
   console.log('Server started on port ' + port);
 });
