@@ -99,8 +99,12 @@ app.post('/compose', (req, res) => {
     body: body
   });
 
-  post.save();
-  res.redirect('/compose');
+  post.save(err => {
+    if (!err){
+      res.redirect('/');
+    }
+  });
+  
 });
 
 // ################################################ "/post" ###################################################
