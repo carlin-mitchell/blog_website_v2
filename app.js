@@ -19,11 +19,9 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 
 //######################################## Mongoose Mongo Connection ########################################  
-const useDB = true; 
 const localOrAtlas = 'local' //choose between 'local' or 'atlas' to connect to the appropriate service
 const dbName = 'blogSiteDB';
 
-if (useDB) {
   if (localOrAtlas.toLocaleLowerCase() === 'local'){
     mongoose.connect('mongodb://localhost:27017/' + dbName);
   }
@@ -32,18 +30,38 @@ if (useDB) {
     mongoose.connect('mongodb+srv://admin-carlin:' + password + '@cluster0.w7dep.mongodb.net/' + dbName);
   }
   else {console.log("CHOOSE AN APPROPRIATE CONNECTION...")};
-};
+
+//######################################## Blog Post Schema and Model #########################################  
+const postSchema = new mongoose.Schema({
+  title: String,
+  date: String,
+  body: String 
+});
+
+const Post = mongoose.model('Post', postSchema);
 
 
 // ################################################ "/" #######################################################
-const posts = [];
 const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 
 app.get('/', (req, res) => {
-  res.render('home', {
-    homeStartingContent: homeStartingContent,
-    posts: posts,
+  Post.find({}, (err, foundPosts) => {
+    if (err) {
+      console.log('There was an error while finding posts.');
+    } else {
+      res.render('home', {
+        posts: foundPosts, 
+        homeStartingContent: homeStartingContent
+      });
+    }
   });
+  
+  
+  
+  // res.render('home', {
+  //   homeStartingContent: homeStartingContent,
+  //   posts: posts,
+  // });
 });
 
 // ################################################ "/about" ##################################################
@@ -66,17 +84,23 @@ app.get('/contact', (req, res) => {
 
 // ############################################### "/compose" ################################################
 app.get('/compose', (req, res) => {
-  res.render('compose', {todaysDate: date.getDate()})
+  res.render('compose', {todaysDate: date.getDate()});
 });
 
 app.post('/compose', (req, res) => {
-  const post = {
-    title: req.body.postTitle,
-    body: req.body.postBody,
-    date: req.body.date ? "Published " + req.body.date: "",
-  };
-  posts.push(post);
-  res.redirect('/');
+  const title = req.body.postTitle;
+  const body = req.body.postBody;
+  const date = req.body.date ? "Published " + req.body.date: "";
+  // console.log(`title: ${title}\n body: ${body} \n date: ${date}`);
+  
+  const post = new Post({
+    title: title,
+    date: date,
+    body: body
+  });
+
+  post.save();
+  res.redirect('/compose');
 });
 
 // ################################################ "/post" ###################################################
